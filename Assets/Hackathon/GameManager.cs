@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
     private bool counting = false;
     private float scoreval;
 
+
+    public void loose() {
+        worldTextMesh.text = "Inf";
+        counting = false;
+    }
+
     public void startGame() { 
 
         rightflicker.transform.position = rightflickerp.position;
@@ -64,7 +70,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void StartSequence() {
-        //StartCoroutine(DelayedMethod());
+        StartCoroutine(DelayedMethod());
     }
     
 
@@ -76,19 +82,38 @@ public class GameManager : MonoBehaviour
         Debug.Log("Sequence started!");
 
         // Wait for 2 seconds
-        yield return new WaitForSeconds(0.1f);
-        carLogic.pause();
         yield return new WaitForSeconds(0.5f);
+        carLogic.pause();
+        yield return new WaitForSeconds(0.1f);
 
         carLogic.go();
         carLogic.HandleRightSphereCollision();
 
+        //yield return new WaitForSeconds(1f);
+        //carLogic.HandleRightSphereCollision();
+
+
         yield return new WaitForSeconds(2f);
-        carLogic.HandleRightSphereCollision();
-        
-        yield return new WaitForSeconds(0.5f);
         carLogic.HandleLeftSphereCollision();
 
+        yield return new WaitForSeconds(3f);
+        carLogic.HandleRightSphereCollision();
+
+        yield return new WaitForSeconds(1f);
+        carLogic.HandleLeftSphereCollision();
+
+        yield return new WaitForSeconds(4f);
+        //carLogic.HandleLeftSphereCollision();
+
+        yield return new WaitForSeconds(4f);
+        carLogic.HandleLeftSphereCollision();
+
+
+        yield return new WaitForSeconds(2.5f);
+        carLogic.pause();
+
+        yield return new WaitForSeconds(4.5f);
+        carLogic.go();
 
         // Print after delay
         Debug.Log("Action resumed after 2 seconds!");

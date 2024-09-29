@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 public enum Direction
@@ -26,6 +27,7 @@ public class CarLogic : MonoBehaviour
 
     private bool running;
 
+    public UnityEvent onCustomEvent;
     public float directionThreshold = 0.01f;
 
     public LayerMask hitLayers;
@@ -47,6 +49,13 @@ public class CarLogic : MonoBehaviour
 
     }
 
+    public void InvokeEvent()
+    {
+        if (onCustomEvent != null)
+        {
+            onCustomEvent.Invoke();
+        }
+    }
 
 
     public void go() { 
@@ -60,6 +69,7 @@ public class CarLogic : MonoBehaviour
 
     public void stop() {
         running = false;
+        InvokeEvent();
     }
 
     private void FixedUpdate()
@@ -75,6 +85,8 @@ public class CarLogic : MonoBehaviour
     {
         if (measureheight() == 10) {
             currentTarget = Direction.Straight;
+            right.StopBlinking();
+            left.StopBlinking();
             Debug.Log("Turning front");
             turnfront();
 
@@ -83,6 +95,7 @@ public class CarLogic : MonoBehaviour
 
         if (currentTarget != Direction.Left && currentTarget !=Direction.Right) { 
             currentTarget = Direction.Stop;
+            stop();
             Debug.Log("Stopping");
             right.StopBlinking();
             left.StopBlinking();
@@ -161,6 +174,7 @@ public class CarLogic : MonoBehaviour
     // Method that handles the collision event
     public void HandleLeftSphereCollision()
     {
+        if (currentTarget == Direction.Stop) { turnleft(); return; }
         currentTarget = Direction.Left;
         // Here you can process the collision
         Debug.Log("A sphere collided with: ");
@@ -174,6 +188,7 @@ public class CarLogic : MonoBehaviour
     // Method that handles the collision event
     public void HandleRightSphereCollision()
     {
+        if (currentTarget == Direction.Stop) { turnright(); return; }
         currentTarget = Direction.Right;
         // Here you can process the collision
         Debug.Log("A sphere collided with: ");
