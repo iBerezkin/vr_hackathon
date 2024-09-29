@@ -24,6 +24,8 @@ public class CarLogic : MonoBehaviour
     public SpherecollisionChecker frontColl = null;
     public Transform raycaster = null;
 
+    private bool running;
+
     public float directionThreshold = 0.01f;
 
     public LayerMask hitLayers;
@@ -41,15 +43,16 @@ public class CarLogic : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        
-
-  
+    public void go() { 
+        running = true; 
     }
+    public void stop() {
+        running = false;
+    }
+
     private void FixedUpdate()
     {
-        if (currentTarget != Direction.Stop)
+        if (currentTarget != Direction.Stop && running)
         {
             gameObject.transform.position += gameObject.transform.forward * speed;
             //gameObject.transform.Translate(Vector3.forward * speed, Space.Self);
