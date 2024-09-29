@@ -8,32 +8,47 @@ public class SpherecollisionChecker : MonoBehaviour
     // Define an action that can be assigned to handle the collision
     public Action OnSphereCollision;
 
-    public float sphereRadius = 0.5f;  // Adjust to the radius of your sphere object
-    public float castDistance = 5f;    // How far you want to cast the sphere
-    public LayerMask hitLayers;
+    private float sphereRadius;   // Adjust to the radius of your sphere object
+    public LayerMask hitLayers;         // Layers to check for hits, you can assign these in the inspector
+    public bool invertEvent = false;
+    private bool disableChecking = false;
+    
 
-
-    void OnCollisionEnter(Collision collision)
+    private void Start()
     {
-
+        sphereRadius = gameObject.transform.lossyScale.x/2;
     }
-
     void Update()
     {
-        // Cast the sphere from the object's position in the forward direction
-        RaycastHit hit;
+        // Perform an OverlapSphere from the current position of the object
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, sphereRadius, hitLayers);
 
-        // Perform a SphereCast
-        if (Physics.SphereCast(transform.position, sphereRadius, transform.forward, out hit, castDistance, hitLayers))
-        {
-            // If the SphereCast hits something, process the collision
-            Debug.Log("SphereCast hit: " + hit.collider.gameObject.name);
+        if (hitColliders.Length > 0 && ! invertEvent && !disableChecking) {
+            foreach (Collider hitCollider in hitColliders)
+            {
+                Debug.Log(gameObject.name + ": Overlap detected with: " + hitCollider.gameObject.name);
+            }
             OnSphereCollision.Invoke();
-            
-            // You can add further logic here based on what was hit
-            // For example, stopping movement, changing direction, etc.
+            disableChecking = true;
         }
+        if (hitColliders.Length == 0 && invertEvent)
+        {
+            Debug.Log(" No overlap any more");
+            OnSphereCollision.Invoke();
+        }
+
+        if (hitColliders.Length == 0)
+        {
+            disableChecking = false;
+        }
+
+    }
+    void OnDrawGizmos()
+    {
+        // This draws a gizmo in the scene view to help visualize the OverlapSphere
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, sphereRadius);
     }
 
-
+    public float getSphereRadius() {  return sphereRadius; }
 }
