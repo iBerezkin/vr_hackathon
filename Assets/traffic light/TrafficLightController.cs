@@ -8,6 +8,7 @@ public class TrafficLightController : MonoBehaviour
 
     private float timer;
     private int currentLight = 0; // 0 = Red, 1 = Yellow, 2 = Green
+    private bool active = false;
 
     void Start()
     {
@@ -16,8 +17,15 @@ public class TrafficLightController : MonoBehaviour
         timer = 0f;
     }
 
+    public void Go() {
+        active = true;
+       }
+
+
+
     void Update()
     {
+        if (active) { 
         timer += Time.deltaTime;
 
         // Время переключения светофора
@@ -42,6 +50,7 @@ public class TrafficLightController : MonoBehaviour
                 }
                 break;
         }
+        }
     }
 
     void SetLight(int light)
@@ -65,6 +74,7 @@ public class TrafficLightController : MonoBehaviour
                 break;
             case 2:
                 greenLight.SetActive(true);
+                active = false;
                 break;
         }
 

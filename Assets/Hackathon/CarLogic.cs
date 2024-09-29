@@ -33,6 +33,10 @@ public class CarLogic : MonoBehaviour
     private Direction currentTarget = Direction.Straight;
     private float streetheight;
 
+    public BlinkerController left;
+    public BlinkerController right;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,9 +47,17 @@ public class CarLogic : MonoBehaviour
 
     }
 
+
+
     public void go() { 
         running = true; 
     }
+
+    public void pause()
+    {
+        running = false;
+    }
+
     public void stop() {
         running = false;
     }
@@ -72,18 +84,24 @@ public class CarLogic : MonoBehaviour
         if (currentTarget != Direction.Left && currentTarget !=Direction.Right) { 
             currentTarget = Direction.Stop;
             Debug.Log("Stopping");
+            right.StopBlinking();
+            left.StopBlinking();
         }
         if (currentTarget == Direction.Left)
         {
             Debug.Log("Turning Left");
             turnleft();
             currentTarget = Direction.Straight;
+            right.StopBlinking();
+            left.StopBlinking();
         }
         if (currentTarget == Direction.Right)
         {
             Debug.Log("Turning Right");
             turnright();
             currentTarget = Direction.Straight;
+            right.StopBlinking();
+            left.StopBlinking();
         }
     }
     void turnright()
@@ -141,26 +159,32 @@ public class CarLogic : MonoBehaviour
 
 
     // Method that handles the collision event
-    void HandleLeftSphereCollision()
+    public void HandleLeftSphereCollision()
     {
         currentTarget = Direction.Left;
         // Here you can process the collision
         Debug.Log("A sphere collided with: ");
+        left.StartBlinking();
+        right.StopBlinking();
         //turnleft();
         // Further logic for specific collisions can go here
         // e.g., if (collision.gameObject.CompareTag("SpecificTag")) { }
     }
 
     // Method that handles the collision event
-    void HandleRightSphereCollision()
+    public void HandleRightSphereCollision()
     {
         currentTarget = Direction.Right;
         // Here you can process the collision
         Debug.Log("A sphere collided with: ");
+        right.StartBlinking();
+        left.StopBlinking();
         //turnright();
         // Further logic for specific collisions can go here
         // e.g., if (collision.gameObject.CompareTag("SpecificTag")) { }
     }
+
+
     void HandleFrontSphereNOCollision()
     {
         stopdrive();
